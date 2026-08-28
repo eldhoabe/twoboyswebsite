@@ -63,6 +63,6 @@ src/
 - [ ] Verify the JSW / Tata Steel / Metcon TMT grade and placement copy in
       `src/data/steelBrands.ts` against the brands' actual technical
       data sheets — it's currently illustrative
-- [x] Set `site` in `astro.config.mjs` — deploying to `https://eldhoabe.github.io/twoboyswebsite`
+- [x] Set `site` in `astro.config.mjs` — deploying to `https://twoboys.co.in`
 - [ ] After deploying, validate the structured data with
       [Google's Rich Results Test](https://search.google.com/test/rich-results)
