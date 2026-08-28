@@ -1,0 +1,88 @@
+---
+import { siteConfig } from '../config/site';
+---
+<nav class="nav on-photo" id="site-nav" aria-label="Primary">
+  <div class="logo">
+    {siteConfig.shortName}
+    <small>{siteConfig.name}, {siteConfig.location}</small>
+  </div>
+  <div class="nav-links">
+    <a href="#catalog">Materials</a>
+    <a href="#visit" class="line">Visit us</a>
+  </div>
+</nav>
+
+<script>
+  // The nav sits over the hero photo (light text) and needs to switch
+  // to dark text once the user scrolls past it onto the cream
+  // background. Observing the hero itself avoids a manual scroll-Y
+  // threshold that would break if the hero's height ever changes.
+  const nav = document.getElementById('site-nav');
+  const hero = document.querySelector('.hero');
+  if (nav && hero && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          nav.classList.toggle('on-photo', entry.isIntersecting);
+        }
+      },
+      { threshold: 0.6 }
+    );
+    observer.observe(hero);
+  }
+</script>
+
+<style>
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 56px;
+    color: var(--color-charcoal);
+  }
+  .nav.on-photo {
+    color: #fff;
+  }
+  .logo {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 17px;
+  }
+  .logo small {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    font-family: var(--font-body);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 34px;
+  }
+  .nav-links a {
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 0.4px;
+  }
+  .nav-links a.line {
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 2px;
+  }
+  @media (max-width: 760px) {
+    .nav {
+      padding: 20px 22px;
+    }
+    .nav-links {
+      display: none;
+    }
+  }
+</style>

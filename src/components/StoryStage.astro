@@ -1,0 +1,104 @@
+---
+import type { Stage } from '../data/stages';
+import FoundationIcon from './icons/FoundationIcon.astro';
+import SteelIcon from './icons/SteelIcon.astro';
+import PipesIcon from './icons/PipesIcon.astro';
+import RoofIcon from './icons/RoofIcon.astro';
+
+interface Props {
+  stage: Stage;
+}
+
+const { stage } = Astro.props;
+
+// Maps a stage id to its icon component. Kept here (rather than as a
+// field on the data object) because data/stages.ts should describe
+// content, not import Astro components — that keeps the data file
+// framework-agnostic and easy to reuse (e.g. for a JSON feed later).
+const icons = {
+  foundation: FoundationIcon,
+  steel: SteelIcon,
+  pipes: PipesIcon,
+  roof: RoofIcon,
+} as const;
+
+const Icon = icons[stage.id];
+---
+<article class="stage fade" aria-labelledby={`stage-${stage.id}-heading`}>
+  <p class="stage-index" aria-hidden="true">{stage.index}</p>
+  <div class="stage-body">
+    <Icon />
+    <h2 class="serif" id={`stage-${stage.id}-heading`}>{stage.title}</h2>
+    <p class="stage-description">{stage.description}</p>
+
+    <slot />
+
+    <ul class="brand-row">
+      {stage.brands.map((brand) => (
+        <li>{brand.name}</li>
+      ))}
+    </ul>
+  </div>
+</article>
+
+<style>
+  .stage {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 48px;
+    padding: var(--space-section-y) 0;
+    border-top: 1px solid var(--color-hairline);
+    align-items: start;
+  }
+  .stage:first-child {
+    border-top: none;
+  }
+  .stage-index {
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: var(--color-stone);
+    padding-top: 8px;
+    margin: 0;
+  }
+  .stage-body :global(.stage-icon) {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 28px;
+    display: block;
+  }
+  h2 {
+    font-size: clamp(28px, 3.6vw, 42px);
+    font-weight: 300;
+    line-height: 1.1;
+    max-width: 520px;
+    margin: 0;
+  }
+  .stage-description {
+    margin-top: 20px;
+    max-width: 460px;
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--color-stone);
+  }
+  .brand-row {
+    list-style: none;
+    display: flex;
+    gap: 28px;
+    margin: 32px 0 0;
+    padding: 0;
+    flex-wrap: wrap;
+  }
+  .brand-row li {
+    font-size: 13px;
+    letter-spacing: 0.4px;
+    border-bottom: 1px solid var(--color-hairline);
+    padding-bottom: 3px;
+  }
+  @media (max-width: 760px) {
+    .stage {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding: 64px 0;
+    }
+  }
+</style>

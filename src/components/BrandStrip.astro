@@ -1,0 +1,61 @@
+---
+import { stages } from '../data/stages';
+
+// Flatten every stage's brands into one "in stock" list, so this
+// strip always stays in sync with the story section above it.
+const brands = stages.flatMap((stage) => stage.brands);
+---
+<section class="brand-strip fade" aria-labelledby="brand-strip-heading">
+  <p class="eyebrow" id="brand-strip-heading">In stock, this week</p>
+  <ul class="brand-list">
+    {brands.map((brand) => (
+      <li>
+        <span class="serif">{brand.name}</span>
+        <small>{brand.category}</small>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .brand-strip {
+    border-top: 1px solid var(--color-hairline);
+    padding: 80px 56px;
+    text-align: center;
+  }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--color-stone);
+    margin: 0 0 44px;
+  }
+  .brand-list {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px 40px;
+  }
+  .brand-list span {
+    font-size: 20px;
+    font-weight: 300;
+    display: block;
+  }
+  .brand-list small {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--color-stone);
+    margin-top: 4px;
+  }
+  @media (max-width: 760px) {
+    .brand-strip {
+      padding: 60px 22px;
+    }
+  }
+</style>

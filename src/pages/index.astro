@@ -1,0 +1,50 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import TrustStrip from '../components/TrustStrip.astro';
+import ProductCatalog from '../components/ProductCatalog.astro';
+import StoryStage from '../components/StoryStage.astro';
+import SteelSelector from '../components/SteelSelector.astro';
+import BrandStrip from '../components/BrandStrip.astro';
+import CTA from '../components/CTA.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppFab from '../components/WhatsAppFab.astro';
+import { stages } from '../data/stages';
+---
+<Layout>
+  <Nav />
+  <Hero />
+  <TrustStrip />
+
+  <main id="main">
+    <ProductCatalog />
+
+    <section class="story" id="story" aria-label="How we stock a home, stage by stage">
+      {stages.map((stage) => (
+        <StoryStage stage={stage}>
+          {stage.id === 'steel' && <SteelSelector />}
+        </StoryStage>
+      ))}
+    </section>
+
+    <BrandStrip />
+    <CTA />
+  </main>
+
+  <Footer />
+  <WhatsAppFab />
+</Layout>
+
+<style>
+  .story {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: 60px 56px 40px;
+  }
+  @media (max-width: 760px) {
+    .story {
+      padding: 40px 22px 20px;
+    }
+  }
+</style>

@@ -1,0 +1,66 @@
+---
+import { trustPoints } from '../data/trustPoints';
+---
+<section class="trust fade" aria-label="Why customers trust us">
+  <ul class="trust-list">
+    {trustPoints.map((point) => (
+      <li>
+        <p class="trust-title serif">{point.title}</p>
+        <p class="trust-desc">{point.description}</p>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .trust {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: 72px 56px;
+  }
+  .trust-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .trust-list li {
+    padding: 0 32px;
+    border-left: 1px solid var(--color-hairline);
+  }
+  .trust-list li:first-child {
+    border-left: none;
+    padding-left: 0;
+  }
+  .trust-title {
+    font-size: 20px;
+    font-weight: 300;
+    margin: 0 0 10px;
+  }
+  .trust-desc {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--color-stone);
+    margin: 0;
+  }
+  @media (max-width: 760px) {
+    .trust {
+      padding: 48px 22px;
+    }
+    .trust-list {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    .trust-list li {
+      border-left: none;
+      padding-left: 0;
+      border-top: 1px solid var(--color-hairline);
+      padding-top: 24px;
+    }
+    .trust-list li:first-child {
+      border-top: none;
+      padding-top: 0;
+    }
+  }
+</style>

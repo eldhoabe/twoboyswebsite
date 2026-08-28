@@ -1,0 +1,169 @@
+---
+import { steelBrandSpecs } from '../data/steelBrands';
+
+// See the NOTE in components/Hero.astro — same reasoning for using
+// <img> instead of astro:assets <Image> for this remote photo.
+const steelPhoto =
+  'https://images.unsplash.com/photo-1763771420303-0f11ccf613d1?fm=jpg&q=80&w=1000&auto=format&fit=crop';
+---
+<div class="steel-selector" data-steel-root>
+  <img
+    class="stage-photo"
+    src={steelPhoto}
+    alt="Bundled steel rebar, close up"
+    width="1000"
+    height="650"
+    loading="lazy"
+  />
+  <p class="credit">Photo: Zoshua Colah / Unsplash</p>
+
+  <div class="selector">
+    <p class="selector-label">Select a brand to see where it's typically used</p>
+
+    <div class="brand-toggle" role="group" aria-label="Choose a steel brand">
+      {steelBrandSpecs.map((brand, i) => (
+        <button type="button" data-brand-button={brand.id} class:list={{ active: i === 0 }}>
+          {brand.label}
+        </button>
+      ))}
+    </div>
+
+    <div class="skeleton-wrap">
+      <svg viewBox="0 0 200 220" role="img" aria-label="House structural skeleton, highlighting where the selected brand's steel is typically used">
+        <rect class="frame-fill" id="fill-foundation" x="30" y="180" width="140" height="20" rx="1" />
+        <rect class="frame-line" id="line-foundation" x="30" y="180" width="140" height="20" rx="1" />
+        <line class="frame-line" id="line-col-l" x1="45" y1="180" x2="45" y2="60" />
+        <line class="frame-line" id="line-col-r" x1="155" y1="180" x2="155" y2="60" />
+        <line class="frame-line" id="line-col-m" x1="100" y1="180" x2="100" y2="60" />
+        <line class="frame-line" id="line-beam" x1="45" y1="60" x2="155" y2="60" />
+        <rect class="frame-fill" id="fill-slab" x="40" y="52" width="120" height="10" rx="1" />
+        <rect class="frame-line" id="line-slab" x="40" y="52" width="120" height="10" rx="1" />
+        <line class="frame-line" id="line-tie1" x1="45" y1="120" x2="155" y2="120" />
+        <line class="frame-line" id="line-tie2" x1="45" y1="150" x2="155" y2="150" />
+      </svg>
+
+      <div class="spec-list" data-spec-panel aria-live="polite">
+        <!-- Populated client-side by steelSelector.ts; see noscript fallback below -->
+      </div>
+    </div>
+
+    <noscript>
+      <ul class="spec-fallback">
+        {steelBrandSpecs.map((brand) => (
+          <li><strong>{brand.grade}</strong> — used mainly in {brand.usedIn}</li>
+        ))}
+      </ul>
+    </noscript>
+  </div>
+
+  <script type="application/json" data-steel-specs is:inline set:html={JSON.stringify(steelBrandSpecs)} />
+</div>
+
+<script>
+  import { initSteelSelector } from '../scripts/steelSelector';
+
+  const root = document.querySelector<HTMLElement>('[data-steel-root]');
+  if (root) initSteelSelector(root);
+</script>
+
+<style>
+  .stage-photo {
+    width: 100%;
+    max-width: 420px;
+    height: 220px;
+    object-fit: cover;
+    margin-top: 32px;
+    filter: grayscale(15%);
+  }
+  .credit {
+    font-size: 10px;
+    color: var(--color-stone);
+    margin-top: 8px;
+    letter-spacing: 0.3px;
+  }
+  .selector {
+    margin-top: 36px;
+    padding-top: 36px;
+    border-top: 1px solid var(--color-hairline);
+  }
+  .selector-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--color-stone);
+    margin: 0 0 16px;
+  }
+  .brand-toggle {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  .brand-toggle button {
+    font-family: var(--font-body);
+    font-size: 13px;
+    letter-spacing: 0.3px;
+    background: transparent;
+    border: 1px solid var(--color-hairline);
+    color: var(--color-charcoal);
+    padding: 11px 20px;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  .brand-toggle button.active {
+    background: var(--color-charcoal);
+    color: var(--color-cream);
+    border-color: var(--color-charcoal);
+  }
+  .brand-toggle button:focus-visible {
+    outline: 2px solid var(--color-clay);
+    outline-offset: 2px;
+  }
+  .skeleton-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: center;
+  }
+  .skeleton-wrap svg {
+    width: 100%;
+    max-width: 260px;
+  }
+  .frame-line {
+    stroke: var(--color-hairline);
+    stroke-width: 2;
+    fill: none;
+    transition: stroke 0.4s ease, stroke-width 0.4s ease;
+  }
+  .frame-line:global(.hot) {
+    stroke: var(--color-clay);
+    stroke-width: 3;
+  }
+  .frame-fill {
+    fill: transparent;
+    transition: fill 0.4s ease;
+  }
+  .frame-fill:global(.hot) {
+    fill: rgba(168, 84, 54, 0.12);
+  }
+  .spec-list {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--color-charcoal);
+  }
+  .spec-list :global(.muted) {
+    color: var(--color-stone);
+    font-size: 12.5px;
+    margin-top: 10px;
+  }
+  .spec-fallback {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--color-charcoal);
+    padding-left: 20px;
+  }
+  @media (max-width: 760px) {
+    .skeleton-wrap {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

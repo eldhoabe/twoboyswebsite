@@ -1,0 +1,137 @@
+---
+import { getCollection, render } from 'astro:content';
+import FoundationIcon from './icons/FoundationIcon.astro';
+import SteelIcon from './icons/SteelIcon.astro';
+import PipesIcon from './icons/PipesIcon.astro';
+import RoofIcon from './icons/RoofIcon.astro';
+
+// Same icon-mapping pattern as StoryStage.astro — see the comment
+// there for why this lives outside the content collection schema.
+const icons = {
+  foundation: FoundationIcon,
+  steel: SteelIcon,
+  pipes: PipesIcon,
+  roof: RoofIcon,
+} as const;
+
+const entries = (await getCollection('products')).sort((a, b) => a.data.order - b.data.order);
+
+// Pre-render each entry's markdown body once here, rather than in the
+// template loop, so the template stays declarative.
+const rendered = await Promise.all(
+  entries.map(async (entry) => ({ entry, Content: (await render(entry)).Content }))
+);
+---
+<section class="catalog fade" id="catalog" aria-labelledby="catalog-heading">
+  <p class="eyebrow">What we stock</p>
+  <h2 class="serif" id="catalog-heading">Four categories, one visit.</h2>
+
+  <div class="catalog-grid">
+    {rendered.map(({ entry, Content }) => {
+      const Icon = icons[entry.data.icon];
+      return (
+        <article class="catalog-card">
+          <Icon />
+          <h3 class="serif">{entry.data.title}</h3>
+          <p class="catalog-summary">{entry.data.summary}</p>
+          <div class="catalog-body">
+            <Content />
+          </div>
+          <ul class="catalog-brands">
+            {entry.data.brands.map((brand) => (
+              <li>
+                <span class="brand-name">{brand.name}</span>
+                {brand.note && <span class="brand-note">{brand.note}</span>}
+              </li>
+            ))}
+          </ul>
+        </article>
+      );
+    })}
+  </div>
+</section>
+
+<style>
+  .catalog {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: 40px 56px 20px;
+  }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--color-stone);
+    margin: 0 0 16px;
+  }
+  h2 {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 300;
+    margin: 0 0 48px;
+  }
+  .catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1px;
+    background: var(--color-hairline);
+    border: 1px solid var(--color-hairline);
+  }
+  .catalog-card {
+    background: var(--color-cream);
+    padding: 32px 28px;
+  }
+  .catalog-card :global(.stage-icon) {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 24px;
+    display: block;
+  }
+  h3 {
+    font-size: 22px;
+    font-weight: 300;
+    margin: 0 0 12px;
+  }
+  .catalog-summary {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--color-stone);
+    margin: 0 0 16px;
+  }
+  .catalog-body {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--color-stone);
+    margin-bottom: 20px;
+  }
+  .catalog-body :global(p) {
+    margin: 0;
+  }
+  .catalog-brands {
+    list-style: none;
+    margin: 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-hairline);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .catalog-brands li {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 13px;
+  }
+  .brand-name {
+    color: var(--color-charcoal);
+  }
+  .brand-note {
+    color: var(--color-stone);
+    font-size: 11px;
+    letter-spacing: 0.3px;
+  }
+  @media (max-width: 760px) {
+    .catalog {
+      padding: 20px 22px 0;
+    }
+  }
+</style>

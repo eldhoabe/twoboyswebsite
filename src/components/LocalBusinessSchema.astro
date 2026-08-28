@@ -1,0 +1,33 @@
+---
+import { siteConfig } from '../config/site';
+
+/**
+ * Emits schema.org LocalBusiness (HardwareStore) structured data as
+ * JSON-LD. This is what lets Google show hours/address/phone directly
+ * in search results and the local "map pack" rather than requiring a
+ * click-through. Rendered once in Layout.astro's <head> so it's on
+ * every page automatically.
+ *
+ * Reads entirely from siteConfig — there is no second place that
+ * needs updating if the address or hours change.
+ */
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'HardwareStore',
+  name: siteConfig.name,
+  description: siteConfig.description,
+  telephone: siteConfig.phoneDisplay,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: siteConfig.addressParts.streetAddress,
+    addressLocality: siteConfig.addressParts.addressLocality,
+    addressRegion: siteConfig.addressParts.addressRegion,
+    postalCode: siteConfig.addressParts.postalCode,
+    addressCountry: siteConfig.addressParts.addressCountry,
+  },
+  openingHours: siteConfig.openingHours,
+  areaServed: siteConfig.serviceArea,
+  url: Astro.site?.toString(),
+};
+---
+<script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />

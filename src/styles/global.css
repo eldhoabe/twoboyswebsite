@@ -1,0 +1,98 @@
+/* Design tokens — the single palette/type scale every component reads
+   from. Keeping these as CSS custom properties (rather than repeating
+   hex values in each component) is what lets a rebrand be a one-file
+   change. */
+:root {
+  --color-cream: #f3efe6;
+  --color-charcoal: #24211c;
+  --color-stone: #8c8577;
+  --color-clay: #a85436;
+  --color-hairline: rgba(36, 33, 28, 0.12);
+  --color-whatsapp: #25d366;
+
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Inter', sans-serif;
+
+  --content-max: 1080px;
+  --space-section-y: 96px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--color-cream);
+  color: var(--color-charcoal);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+.serif {
+  font-family: var(--font-display);
+  font-weight: 300;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--color-charcoal);
+  color: var(--color-cream);
+  padding: 12px 20px;
+  font-size: 14px;
+}
+.skip-link:focus {
+  left: 12px;
+  top: 12px;
+}
+
+/* Scroll-reveal utility. JS toggles .in; without JS (or with
+   prefers-reduced-motion) content is fully visible by default so the
+   page degrades gracefully instead of hiding content behind a script
+   that might fail to load. */
+.fade {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.fade.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .fade {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
