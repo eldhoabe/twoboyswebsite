@@ -63,7 +63,6 @@ src/
 - [ ] Verify the JSW / Tata Steel / Metcon TMT grade and placement copy in
       `src/data/steelBrands.ts` against the brands' actual technical
       data sheets — it's currently illustrative
-- [ ] Set `site` in `astro.config.mjs` to the real production domain
-      (also used as the `url` field in the JSON-LD schema)
+- [x] Set `site` in `astro.config.mjs` — deploying to `https://eldhoabe.github.io/twoboyswebsite`
 - [ ] After deploying, validate the structured data with
       [Google's Rich Results Test](https://search.google.com/test/rich-results)
