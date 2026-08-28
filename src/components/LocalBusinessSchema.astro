@@ -11,12 +11,27 @@ import { siteConfig } from '../config/site';
  * Reads entirely from siteConfig — there is no second place that
  * needs updating if the address or hours change.
  */
+
+// Fully-qualified site URL; fall back to the configured domain if
+// Astro.site isn't set at build time.
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? 'https://twoboys.co.in';
+
+// Google requires `image` for LocalBusiness rich results. Using the
+// hero photo URL here; swap for a real shop photo once one is available.
+const image =
+  'https://images.unsplash.com/photo-1605146769289-440113cc3d00?fm=jpg&q=80&w=1800&auto=format&fit=crop';
+
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'HardwareStore',
+  '@id': `${siteUrl}/#store`,
   name: siteConfig.name,
   description: siteConfig.description,
+  image,
+  logo: `${siteUrl}/favicon.svg`,
+  url: siteUrl,
   telephone: siteConfig.phoneDisplay,
+  priceRange: '₹₹',
   address: {
     '@type': 'PostalAddress',
     streetAddress: siteConfig.addressParts.streetAddress,
@@ -25,9 +40,18 @@ const schema = {
     postalCode: siteConfig.addressParts.postalCode,
     addressCountry: siteConfig.addressParts.addressCountry,
   },
-  openingHours: siteConfig.openingHours,
-  areaServed: siteConfig.serviceArea,
-  url: Astro.site?.toString(),
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+      opens: '08:00',
+      closes: '17:30',
+    },
+  ],
+  areaServed: siteConfig.serviceArea.map((city) => ({
+    '@type': 'City',
+    name: city,
+  })),
 };
 ---
 <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
