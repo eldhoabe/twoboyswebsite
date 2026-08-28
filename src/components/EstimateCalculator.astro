@@ -1,0 +1,566 @@
+---
+import { squareTubeSizes } from '../data/squareTubes';
+import { siteConfig } from '../config/site';
+
+const squareSizes = squareTubeSizes.filter((s) => s.shape === 'square');
+const rectSizes   = squareTubeSizes.filter((s) => s.shape === 'rect');
+
+function weight(size: typeof squareTubeSizes[number], gauge: 16 | 18): number | undefined {
+  return size.variants.find((v) => v.gauge === gauge)?.weightKg;
+}
+---
+
+<div class="calc" data-calc-root>
+  <!-- Global brand toggle -->
+  <div class="brand-bar" role="group" aria-label="Brand">
+    <button type="button" class="brand-btn active" data-brand="normal">Normal</button>
+    <button type="button" class="brand-btn" data-brand="apollo">
+      <span class="a-mark">A</span>&thinsp; Apollo
+    </button>
+  </div>
+
+  <div class="divider"><span>Square</span></div>
+  <ul class="rows">
+    {squareSizes.map((size) => {
+      const w16 = weight(size, 16);
+      const w18 = weight(size, 18);
+      const has18 = w18 !== undefined;
+      return (
+        <li class="row" data-row data-size-id={size.id} data-size-label={size.label} data-size-mm={size.labelMm}>
+          <div class="row-head">
+            <span class="size-label">{size.label} in</span>
+            <span class="size-mm">{size.labelMm}</span>
+          </div>
+          <div class="row-body">
+            <div class="gauge-toggle" role="group" aria-label={`Wall thickness for ${size.label}`}>
+              <button type="button" class="gauge active" data-gauge="16" data-weight={w16}>
+                <span class="g-name">16G</span>
+                <span class="g-kg">{w16} kg</span>
+              </button>
+              {has18 && (
+                <button type="button" class="gauge" data-gauge="18" data-weight={w18}>
+                  <span class="g-name">18G</span>
+                  <span class="g-kg">{w18} kg</span>
+                </button>
+              )}
+            </div>
+            <div class="stepper" role="group" aria-label={`Pieces of ${size.label}`}>
+              <button type="button" class="step" data-step="minus" aria-label="Remove one">−</button>
+              <input type="text" inputmode="numeric" class="qty" data-qty value="0" aria-label="Quantity" />
+              <button type="button" class="step" data-step="plus" aria-label="Add one">+</button>
+            </div>
+          </div>
+        </li>
+      );
+    })}
+  </ul>
+
+  <div class="divider"><span>Rectangular</span></div>
+  <ul class="rows">
+    {rectSizes.map((size) => {
+      const w16 = weight(size, 16);
+      const w18 = weight(size, 18);
+      const has18 = w18 !== undefined;
+      return (
+        <li class="row" data-row data-size-id={size.id} data-size-label={size.label} data-size-mm={size.labelMm}>
+          <div class="row-head">
+            <span class="size-label">{size.label} in</span>
+            <span class="size-mm">{size.labelMm}</span>
+          </div>
+          <div class="row-body">
+            <div class="gauge-toggle" role="group" aria-label={`Wall thickness for ${size.label}`}>
+              <button type="button" class="gauge active" data-gauge="16" data-weight={w16}>
+                <span class="g-name">16G</span>
+                <span class="g-kg">{w16} kg</span>
+              </button>
+              {has18 && (
+                <button type="button" class="gauge" data-gauge="18" data-weight={w18}>
+                  <span class="g-name">18G</span>
+                  <span class="g-kg">{w18} kg</span>
+                </button>
+              )}
+            </div>
+            <div class="stepper" role="group" aria-label={`Pieces of ${size.label}`}>
+              <button type="button" class="step" data-step="minus" aria-label="Remove one">−</button>
+              <input type="text" inputmode="numeric" class="qty" data-qty value="0" aria-label="Quantity" />
+              <button type="button" class="step" data-step="plus" aria-label="Add one">+</button>
+            </div>
+          </div>
+        </li>
+      );
+    })}
+  </ul>
+
+  <p class="length-note">Weight per piece · standard 20 ft / 6 m length</p>
+
+  <!-- Rate — single input; label switches with brand -->
+  <div class="rate-field">
+    <label class="field-label" for="calc-rate">
+      Today's rate <span data-rate-brand>(Normal)</span>
+    </label>
+    <div class="prefix-wrap">
+      <span class="prefix" aria-hidden="true">₹</span>
+      <input
+        class="input"
+        id="calc-rate"
+        type="number"
+        inputmode="decimal"
+        min="0"
+        step="0.01"
+        placeholder="Ask the shop — e.g. 78"
+        data-rate-input
+      />
+      <span class="suffix">/kg</span>
+    </div>
+  </div>
+
+  <!-- Totals + WhatsApp -->
+  <div data-totals-section hidden>
+    <div class="grand-total-row">
+      <span class="grand-total-label">Total estimate</span>
+      <strong class="grand-total-value" data-grand-total>—</strong>
+    </div>
+    <p class="quick-info" data-quick-info></p>
+    <p class="bulk-notice" data-bulk-notice hidden>Eligible for bulk discount — ask the shop for a better rate.</p>
+    <p class="result-note">Estimate only — confirm final pricing with the shop.</p>
+    <a
+      class="btn-whatsapp"
+      data-whatsapp-btn
+      href="#"
+      data-phone={siteConfig.whatsappNumber}
+      target="_blank"
+      rel="noopener"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.553 4.103 1.522 5.83L.057 23.25c-.078.312.162.6.478.527l5.554-1.456A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.9 0-3.681-.516-5.21-1.416l-.374-.222-3.875 1.016 1.035-3.77-.243-.387A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+      </svg>
+      Send estimate on WhatsApp
+    </a>
+  </div>
+</div>
+
+<script>
+  import { initEstimateCalculator } from '../scripts/estimateCalculator';
+  const root = document.querySelector<HTMLElement>('[data-calc-root]');
+  if (root) initEstimateCalculator(root);
+</script>
+
+<style>
+  .calc {
+    background: #fff;
+    border: 1px solid var(--color-hairline);
+    border-radius: 4px;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 520px;
+    width: 100%;
+  }
+
+  /* Brand toggle */
+  .brand-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 4px;
+    background: var(--color-cream);
+    border: 1px solid var(--color-hairline);
+    border-radius: 2px;
+  }
+
+  .brand-btn {
+    padding: 12px;
+    background: transparent;
+    border: none;
+    color: var(--color-stone);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    border-radius: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .brand-btn.active {
+    background: var(--color-charcoal);
+    color: var(--color-cream);
+  }
+
+  .brand-btn[data-brand="apollo"].active {
+    background: var(--color-clay);
+  }
+
+  .brand-btn:focus-visible {
+    outline: 2px solid var(--color-clay);
+    outline-offset: 2px;
+  }
+
+  /* Apollo indicator (used in brand button + info line) */
+  .a-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background: var(--color-clay);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1;
+    vertical-align: middle;
+  }
+
+  .brand-btn.active[data-brand="apollo"] .a-mark {
+    background: #fff;
+    color: var(--color-clay);
+  }
+
+  /* Section divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-stone);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 4px 0 -4px;
+  }
+
+  .divider::before,
+  .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-hairline);
+  }
+
+  /* Rows */
+  .rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .row:last-child {
+    border-bottom: 0;
+  }
+
+  .row.has-qty {
+    background: rgba(168, 84, 54, 0.04);
+    margin: 0 -8px;
+    padding: 14px 8px;
+    border-radius: 3px;
+  }
+
+  .row-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .size-label {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--color-charcoal);
+  }
+
+  .size-mm {
+    font-size: 12px;
+    color: var(--color-stone);
+    letter-spacing: 0.3px;
+  }
+
+  .row-body {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .gauge-toggle {
+    display: flex;
+    gap: 6px;
+    flex: 1 1 auto;
+  }
+
+  .gauge {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    padding: 8px 10px;
+    background: var(--color-cream);
+    border: 1px solid var(--color-hairline);
+    border-radius: 2px;
+    color: var(--color-charcoal);
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    min-width: 78px;
+  }
+
+  .gauge.active {
+    background: var(--color-charcoal);
+    color: var(--color-cream);
+    border-color: var(--color-charcoal);
+  }
+
+  .gauge:focus-visible {
+    outline: 2px solid var(--color-clay);
+    outline-offset: 2px;
+  }
+
+  .g-name {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  .g-kg {
+    font-size: 12px;
+    opacity: 0.8;
+  }
+
+  /* Stepper */
+  .stepper {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid var(--color-hairline);
+    border-radius: 2px;
+    background: var(--color-cream);
+    flex-shrink: 0;
+  }
+
+  .step {
+    width: 40px;
+    background: transparent;
+    border: none;
+    color: var(--color-charcoal);
+    font-size: 22px;
+    font-weight: 300;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+  }
+
+  .step:active,
+  .step:hover {
+    background: rgba(36, 33, 28, 0.08);
+  }
+
+  .step:focus-visible {
+    outline: 2px solid var(--color-clay);
+    outline-offset: -2px;
+  }
+
+  .qty {
+    width: 48px;
+    text-align: center;
+    border: none;
+    border-left: 1px solid var(--color-hairline);
+    border-right: 1px solid var(--color-hairline);
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--color-charcoal);
+    padding: 0;
+    -moz-appearance: textfield;
+  }
+
+  .qty::-webkit-outer-spin-button,
+  .qty::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .qty:focus {
+    outline: 2px solid var(--color-clay);
+    outline-offset: -2px;
+  }
+
+  .length-note {
+    font-size: 11px;
+    color: var(--color-stone);
+    margin: 0;
+    text-align: center;
+  }
+
+  /* Rate */
+  .rate-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .field-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--color-stone);
+  }
+
+  .prefix-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input {
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--color-charcoal);
+    background: var(--color-cream);
+    border: 1px solid var(--color-hairline);
+    border-radius: 2px;
+    padding: 13px 40px 13px 28px;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .input:focus {
+    outline: 2px solid var(--color-clay);
+    outline-offset: 2px;
+    border-color: transparent;
+  }
+
+  .prefix,
+  .suffix {
+    position: absolute;
+    color: var(--color-stone);
+    font-size: 15px;
+    pointer-events: none;
+  }
+
+  .prefix { left: 14px; }
+  .suffix { right: 14px; }
+
+  /* Grand total */
+  .grand-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 16px 0 4px;
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .grand-total-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--color-stone);
+  }
+
+  .grand-total-value {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--color-charcoal);
+  }
+
+  .quick-info {
+    font-size: 13px;
+    color: var(--color-charcoal);
+    margin: 4px 0 8px;
+    letter-spacing: 0.2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .quick-info:empty {
+    display: none;
+  }
+
+  .bulk-notice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-clay);
+    background: rgba(168, 84, 54, 0.08);
+    border-left: 3px solid var(--color-clay);
+    padding: 10px 12px;
+    margin: 0 0 12px;
+    border-radius: 2px;
+  }
+
+  .bulk-notice[hidden] {
+    display: none;
+  }
+
+  .bulk-notice::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--color-clay);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .result-note {
+    font-size: 11px;
+    color: var(--color-stone);
+    margin: 0 0 12px;
+  }
+
+  .btn-whatsapp {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--color-whatsapp);
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-family: var(--font-body);
+    padding: 15px 20px;
+    border-radius: 2px;
+  }
+
+  .btn-whatsapp:focus-visible {
+    outline: 2px solid var(--color-charcoal);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 400px) {
+    .row-body {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .stepper {
+      align-self: flex-end;
+    }
+  }
+</style>

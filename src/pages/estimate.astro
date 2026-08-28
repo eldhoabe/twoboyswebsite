@@ -1,0 +1,65 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import EstimateCalculator from '../components/EstimateCalculator.astro';
+import WhatsAppFab from '../components/WhatsAppFab.astro';
+---
+
+<Layout
+  title="Square Tube Estimate — Two Boys Shop"
+  description="Calculate an instant weight-based price estimate for square and rectangular steel tubes. Enter today's rate and get a WhatsApp-ready breakdown."
+>
+  <Nav />
+
+  <main id="main" class="page">
+    <div class="page-header fade">
+      <p class="eyebrow">Estimate tool</p>
+      <h1 class="serif">Square Tube</h1>
+      <p class="sub">
+        Pick your size, enter today's rate and quantity — get an instant estimate
+        you can send straight to us on WhatsApp.
+      </p>
+    </div>
+
+    <EstimateCalculator />
+  </main>
+
+  <WhatsAppFab />
+</Layout>
+
+<style>
+  .page {
+    min-height: 100vh;
+    padding: 120px 24px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .page-header {
+    text-align: center;
+    max-width: 480px;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--color-stone);
+    margin: 0 0 16px;
+  }
+
+  h1 {
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 300;
+    margin: 0 0 16px;
+  }
+
+  .sub {
+    color: var(--color-stone);
+    font-size: 15px;
+    line-height: 1.7;
+    margin: 0;
+  }
+</style>
