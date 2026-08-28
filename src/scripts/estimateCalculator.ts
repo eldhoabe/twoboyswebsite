@@ -19,6 +19,8 @@ export function initEstimateCalculator(root: HTMLElement): void {
   const quickInfoEl   = root.querySelector<HTMLElement>('[data-quick-info]');
   const bulkNoticeEl  = root.querySelector<HTMLElement>('[data-bulk-notice]');
   const whatsappBtn   = root.querySelector<HTMLAnchorElement>('[data-whatsapp-btn]');
+  const pdfBtn        = root.querySelector<HTMLButtonElement>('[data-pdf-btn]');
+  const printSummary  = root.querySelector<HTMLElement>('[data-print-summary]');
 
   if (rows.length === 0 || !rateInput) return;
 
@@ -176,7 +178,11 @@ export function initEstimateCalculator(root: HTMLElement): void {
       lines.push(`*Eligible for bulk discount* — please suggest a better rate.`);
     }
 
-    lines.push(`_Estimate only — confirm final pricing with the shop._`);
+    lines.push(
+      `_Estimate only — confirm final pricing with the shop._`,
+      ``,
+      `_Generated from our website calculator — twoboys.co.in/estimate_`,
+    );
     whatsappBtn.href = `https://wa.me/${phone}?text=${encodeURIComponent(lines.join('\n'))}`;
   }
 
@@ -225,6 +231,111 @@ export function initEstimateCalculator(root: HTMLElement): void {
     sessionStorage.setItem(RATE_PREFIX + brand, rateInput!.value);
     recompute();
   });
+
+  // PDF button — build print summary from current state, then invoke print
+  pdfBtn?.addEventListener('click', () => {
+    if (!printSummary) return;
+    buildPrintSummary();
+    window.print();
+  });
+
+  function buildPrintSummary(): void {
+    if (!printSummary) return;
+    const r = rate();
+    const brandTag = brand === 'apollo' ? 'Apollo (A)' : 'Normal';
+    const today = new Date().toLocaleDateString('en-IN', {
+      day: 'numeric', month: 'long', year: 'numeric',
+    });
+
+    let grand = 0;
+    let totalKg = 0;
+    let totalPieces = 0;
+    const itemRows: string[] = [];
+
+    let n = 0;
+    rows.forEach((row) => {
+      const id = row.dataset.sizeId;
+      if (!id) return;
+      const s = state.get(id);
+      if (!s || s.qty <= 0) return;
+      n += 1;
+      const label = row.dataset.sizeLabel ?? '';
+      const mm    = row.dataset.sizeMm ?? '';
+      const w     = rowWeight(row, s.gauge);
+      const sub   = w * r * s.qty;
+      grand += sub;
+      totalKg += w * s.qty;
+      totalPieces += s.qty;
+      itemRows.push(`
+        <tr>
+          <td>${n}</td>
+          <td>${label} in <br/><span style="font-size:10px;color:#666">${mm}</span></td>
+          <td>${s.gauge}G</td>
+          <td class="num">${w} kg</td>
+          <td class="num">${s.qty}</td>
+          <td class="num">${fmt(w * r)}</td>
+          <td class="num">${fmt(sub)}</td>
+        </tr>
+      `);
+    });
+
+    const kg = totalKg.toLocaleString('en-IN', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const bulkHtml = totalKg > BULK_KG
+      ? `<div class="p-bulk"><strong>Eligible for bulk discount</strong> — this order exceeds 950 kg. Please ask the shop for a better rate.</div>`
+      : '';
+
+    printSummary.innerHTML = `
+      <div class="p-header">
+        <p class="p-shop">Two Boys Shop</p>
+        <p class="p-meta">
+          Pathanamthitta-Melevettipuram Rd, Vettipuram, Pathanamthitta, Kerala 689645<br/>
+          +91 98466 63890 &nbsp;·&nbsp; Monday – Saturday, 8 am – 5:30 pm
+        </p>
+      </div>
+
+      <h2 class="p-title">Square Tube Estimate</h2>
+      <p class="p-info">
+        <strong>Date:</strong> ${today}<br/>
+        <strong>Brand:</strong> ${brandTag}<br/>
+        <strong>Rate:</strong> ₹${r}/kg<br/>
+        <strong>Length:</strong> 20 ft / 6 m per piece
+      </p>
+
+      <table class="p-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Size</th>
+            <th>Gauge</th>
+            <th class="num">Weight/pc</th>
+            <th class="num">Qty</th>
+            <th class="num">Price/pc</th>
+            <th class="num">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>${itemRows.join('')}</tbody>
+      </table>
+
+      <div class="p-totals">
+        <div style="display:flex;justify-content:space-between;">
+          <span>Total weight</span><span>${kg} kg</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span>Total pieces</span><span>${totalPieces}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid #ccc;">
+          <span class="grand">Total estimate</span><span class="grand">${fmt(grand)}</span>
+        </div>
+      </div>
+
+      ${bulkHtml}
+
+      <p class="p-note">
+        Estimate only — confirm final pricing with the shop.<br/>
+        Generated from twoboys.co.in/estimate
+      </p>
+    `;
+  }
 
   // Boot
   syncBrandUi();

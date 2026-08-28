@@ -137,7 +137,13 @@ function weight(size: typeof squareTubeSizes[number], gauge: 16 | 18): number | 
       </svg>
       Send estimate on WhatsApp
     </a>
+    <button type="button" class="btn-pdf" data-pdf-btn>
+      Save as PDF
+    </button>
   </div>
+
+  <!-- Print-only clean summary. Populated by the script on PDF click. -->
+  <div class="print-summary" data-print-summary aria-hidden="true"></div>
 </div>
 
 <script>
@@ -554,6 +560,73 @@ function weight(size: typeof squareTubeSizes[number], gauge: 16 | 18): number | 
     outline-offset: 2px;
   }
 
+  .btn-pdf {
+    display: inline-block;
+    background: transparent;
+    color: var(--color-charcoal);
+    border: 1px solid var(--color-hairline);
+    font-family: var(--font-body);
+    font-size: 12px;
+    letter-spacing: 0.3px;
+    padding: 10px 16px;
+    border-radius: 2px;
+    margin-top: 8px;
+    cursor: pointer;
+    align-self: center;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .btn-pdf:hover,
+  .btn-pdf:active {
+    background: var(--color-cream);
+    border-color: var(--color-charcoal);
+  }
+
+  .btn-pdf:focus-visible {
+    outline: 2px solid var(--color-clay);
+    outline-offset: 2px;
+  }
+
+  /* Print-only summary is hidden on screen */
+  .print-summary {
+    display: none;
+  }
+
+  /* Print styles: hide interactive UI, show clean summary */
+  @media print {
+    :global(body) {
+      background: #fff;
+      color: #000;
+    }
+    :global(#site-nav),
+    :global(.whatsapp-fab),
+    :global(.page-header),
+    .brand-bar,
+    .divider,
+    .rows,
+    .length-note,
+    .rate-field,
+    .grand-total-row,
+    .quick-info,
+    .bulk-notice,
+    .result-note,
+    .btn-whatsapp,
+    .btn-pdf {
+      display: none !important;
+    }
+    .calc {
+      background: transparent;
+      border: none;
+      padding: 0;
+      max-width: none;
+    }
+    .print-summary {
+      display: block;
+      font-family: var(--font-body);
+      color: #000;
+    }
+  }
+
   @media (max-width: 400px) {
     .row-body {
       flex-direction: column;
@@ -562,5 +635,91 @@ function weight(size: typeof squareTubeSizes[number], gauge: 16 | 18): number | 
     .stepper {
       align-self: flex-end;
     }
+  }
+
+  /* Structural styles for the print summary (used only when printing). */
+  .print-summary :global(.p-header) {
+    text-align: center;
+    border-bottom: 2px solid #000;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+  }
+  .print-summary :global(.p-shop) {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .print-summary :global(.p-meta) {
+    font-size: 11px;
+    margin: 4px 0 0;
+    line-height: 1.5;
+  }
+  .print-summary :global(.p-title) {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 8px;
+  }
+  .print-summary :global(.p-info) {
+    font-size: 12px;
+    margin: 0 0 16px;
+    line-height: 1.6;
+  }
+  .print-summary :global(.p-info strong) {
+    display: inline-block;
+    min-width: 90px;
+  }
+  .print-summary :global(.p-table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin: 12px 0 16px;
+  }
+  .print-summary :global(.p-table th),
+  .print-summary :global(.p-table td) {
+    border-bottom: 1px solid #ccc;
+    padding: 8px 6px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .print-summary :global(.p-table th) {
+    background: #f4f4f4;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .print-summary :global(.p-table td.num),
+  .print-summary :global(.p-table th.num) {
+    text-align: right;
+  }
+  .print-summary :global(.p-totals) {
+    margin-top: 16px;
+    border-top: 2px solid #000;
+    padding-top: 12px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .print-summary :global(.p-totals .grand) {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 500;
+  }
+  .print-summary :global(.p-bulk) {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-left: 3px solid #000;
+    background: #f4f4f4;
+    font-size: 12px;
+  }
+  .print-summary :global(.p-note) {
+    margin-top: 20px;
+    padding-top: 12px;
+    border-top: 1px solid #ccc;
+    font-size: 11px;
+    color: #444;
+    text-align: center;
+    line-height: 1.6;
   }
 </style>
