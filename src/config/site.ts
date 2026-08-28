@@ -8,7 +8,7 @@ export const siteConfig = {
   shortName: 'Two Boys',
   tagline: 'Cement and steel Pathanamthitta has trusted for 40 years.',
   description:
-    'UltraTech and Ramco cement, Metcon, Tata Steel and JSW TMT bars, roofing sheets, GI and GP pipes — stocked and explained plainly, with home and site delivery available.',
+    'Hardware shop in Pathanamthitta — UltraTech and Ramco cement, Tata Steel and JSW TMT bars, roofing sheets and GI pipes. Home and site delivery.',
   yearsTrading: 40,
   location: 'Pathanamthitta, Kerala',
   serviceArea: ['Pathanamthitta', 'Konni', 'Chittar'],
